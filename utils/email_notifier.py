@@ -1,4 +1,4 @@
-﻿import smtplib
+import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from datetime import datetime, timedelta
@@ -11,7 +11,7 @@ class EmailNotifier:
         self.smtp_username = os.environ.get('SMTP_USERNAME', '')
         self.smtp_password = os.environ.get('SMTP_PASSWORD', '')
         self.from_email = os.environ.get('FROM_EMAIL', 'billing@school.edu')
-        self.enabled = bool(self.smtp_username and self.smtp_password)
+        self.enabled = False  # Email disabled for now
     
     def send_overdue_notification(self, student, bills):
         """Send overdue notification to student's guardian"""

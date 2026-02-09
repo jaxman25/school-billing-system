@@ -14,3 +14,7 @@ venv/
 
 # Generated files
 exports/
+
+# Environment variables
+.env
+

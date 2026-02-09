@@ -1,6 +1,7 @@
 ﻿from dotenv import load_dotenv
 load_dotenv()  # Load environment variables from .env file
-
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
 from flask import Flask, render_template, session, redirect, url_for
 from models.database import db, init_db
 import os
@@ -129,6 +130,8 @@ def create_app():
     @app.before_request
     def before_request():
         # Make username available to all templates
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables from .env file
         from flask import g
         g.username = session.get('username')
         g.role = session.get('role')
@@ -169,3 +172,4 @@ if __name__ == '__main__':
     print(" Press Ctrl+C to stop")
     
     app.run(debug=True, host='0.0.0.0', port=5000)
+
