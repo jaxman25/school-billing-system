@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}All Bills{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>All Bills</h2>
+    <a href="/bills/create" class="btn" style="margin-bottom: 1rem;">Create New Bill</a>
+    <a href="/bills/bulk" class="btn btn-warning" style="margin-bottom: 1rem;">Bulk Create Bills</a>
+    <a href="/bills/unpaid" class="btn btn-warning" style="margin-bottom: 1rem;">View Unpaid Bills</a>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Balance</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills %}
+            <tr>
+                <td>{{ bill.id }}</td>
+                <td>{{ bill.student.name }}</td>
+                <td>{{ bill.description }}</td>
+                <td>${{ "%.2f"|format(bill.amount) }}</td>
+                <td>{{ bill.due_date.strftime("%Y-%m-%d") }}</td>
+                <td>
+                    <span style="color: {% if bill.status == 'paid' %}green{% elif bill.status == 'partial' %}orange{% else %}red{% endif %}">
+                        {{ bill.status|upper }}
+                    </span>
+                </td>
+                <td>${{ "%.2f"|format(bill.balance()) }}</td>
+                <td>
+                    {% if bill.status != 'paid' %}
+                    <form action="/bills/mark_paid/{{ bill.id }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-success" onclick="return confirm('Mark bill #{{ bill.id }} as fully paid?')">Mark Paid</button>
+                    </form>
+                    {% endif %}
+                    <form action="/bills/delete/{{ bill.id }}" method="POST" style="display: inline;">
+                        <button type="submit" class="btn btn-danger" onclick="return confirm('Delete bill #{{ bill.id }}?')">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="8">No bills found. <a href="/bills/create">Create your first bill</a></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

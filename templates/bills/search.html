@@ -1,0 +1,88 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Search Bills{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Search Bills</h2>
+    
+    <form method="GET" action="/bills/search">
+        <div class="form-group">
+            <label for="query">Search Term</label>
+            <input type="text" id="query" name="query" placeholder="Search by student name, bill description..." value="{{ query }}">
+        </div>
+        
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" name="status">
+                <option value="">All Statuses</option>
+                <option value="unpaid" {% if status == "unpaid" %}selected{% endif %}>Unpaid</option>
+                <option value="partial" {% if status == "partial" %}selected{% endif %}>Partial</option>
+                <option value="paid" {% if status == "paid" %}selected{% endif %}>Paid</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="min_amount">Amount Range</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="number" id="min_amount" name="min_amount" placeholder="Min $" step="0.01" value="{{ min_amount }}">
+                <input type="number" id="max_amount" name="max_amount" placeholder="Max $" step="0.01" value="{{ max_amount }}">
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="due_date_from">Due Date Range</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="date" id="due_date_from" name="due_date_from" value="{{ due_date_from }}">
+                <input type="date" id="due_date_to" name="due_date_to" value="{{ due_date_to }}">
+            </div>
+        </div>
+        
+        <button type="submit" class="btn">Search</button>
+        <a href="/bills/" class="btn">Clear</a>
+    </form>
+</div>
+
+{% if bills is defined %}
+<div class="card">
+    <h3>Search Results ({{ bills|length }} found)</h3>
+    
+    {% if bills %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills %}
+            <tr>
+                <td>{{ bill.id }}</td>
+                <td>{{ bill.student.name }}</td>
+                <td>{{ bill.description }}</td>
+                <td>${{ "%.2f"|format(bill.amount) }}</td>
+                <td>{{ bill.due_date.strftime("%Y-%m-%d") }}</td>
+                <td>
+                    <span style="color: {% if bill.status == 'paid' %}green{% elif bill.status == 'partial' %}orange{% else %}red{% endif %}">
+                        {{ bill.status|upper }}
+                    </span>
+                </td>
+                <td>${{ "%.2f"|format(bill.balance()) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-warning">
+        No bills found matching your search criteria.
+    </div>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}

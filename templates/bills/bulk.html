@@ -1,0 +1,73 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Bulk Bill Creation{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Bulk Bill Creation</h2>
+    <p>Create the same bill for multiple students at once.</p>
+    
+    <form method="POST" action="/bills/bulk_create">
+        <div class="form-group">
+            <label>Select Students *</label>
+            <div style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; border-radius: 3px;">
+                {% for student in students %}
+                <div>
+                    <input type="checkbox" id="student_{{ student.id }}" name="student_ids" value="{{ student.id }}">
+                    <label for="student_{{ student.id }}">{{ student.name }} (Grade {{ student.grade }})</label>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <input type="text" id="description" name="description" required placeholder="e.g., Term 1 Tuition, Activity Fee">
+        </div>
+        
+        <div class="form-group">
+            <label for="amount">Amount ($) *</label>
+            <input type="number" id="amount" name="amount" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="due_date">Due Date *</label>
+            <input type="date" id="due_date" name="due_date" required>
+        </div>
+        
+        <button type="submit" class="btn btn-success">Create Bills</button>
+        <a href="/bills/" class="btn">Cancel</a>
+    </form>
+</div>
+
+<div class="card">
+    <h3>Quick Select</h3>
+    <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+        <button type="button" class="btn" onclick="selectAll()">Select All</button>
+        <button type="button" class="btn" onclick="deselectAll()">Deselect All</button>
+        <button type="button" class="btn" onclick="selectByGrade(10)">Grade 10 Only</button>
+        <button type="button" class="btn" onclick="selectByGrade(11)">Grade 11 Only</button>
+    </div>
+</div>
+
+<script>
+function selectAll() {
+    document.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = true);
+}
+
+function deselectAll() {
+    document.querySelectorAll('input[name="student_ids"]').forEach(cb => cb.checked = false);
+}
+
+function selectByGrade(grade) {
+    document.querySelectorAll('input[name="student_ids"]').forEach(cb => {
+        const label = document.querySelector(`label[for="${cb.id}"]`);
+        if (label && label.textContent.includes(`Grade ${grade}`)) {
+            cb.checked = true;
+        } else {
+            cb.checked = false;
+        }
+    });
+}
+</script>
+{% endblock %}

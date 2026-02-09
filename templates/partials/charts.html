@@ -1,0 +1,73 @@
+﻿<div class="card">
+    <h2>Financial Overview</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+        <div>
+            <h3>Bill Status Distribution</h3>
+            <canvas id="billStatusChart" width="300" height="300"></canvas>
+        </div>
+        <div>
+            <h3>Monthly Collections</h3>
+            <canvas id="monthlyCollectionsChart" width="300" height="300"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Bill Status Chart
+const billStatusCtx = document.getElementById('billStatusChart').getContext('2d');
+const billStatusChart = new Chart(billStatusCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Paid', 'Unpaid', 'Partial'],
+        datasets: [{
+            data: [{{ bill_stats[0] }}, {{ bill_stats[1] }}, {{ bill_stats[2] }}],
+            backgroundColor: [
+                '#27ae60',  // Green for paid
+                '#e74c3c',  // Red for unpaid
+                '#f39c12'   // Orange for partial
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Monthly Collections Chart
+const monthlyCtx = document.getElementById('monthlyCollectionsChart').getContext('2d');
+const monthlyChart = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+        labels: [{% for label in monthly_labels %}"{{ label }}",{% endfor %}],
+        datasets: [{
+            label: 'Collections ($)',
+            data: [{% for data in monthly_data %}{{ data }},{% endfor %}],
+            backgroundColor: '#3498db'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    callback: function(value) {
+                        return '$' + value;
+                    }
+                }
+            }
+        }
+    }
+});
+</script>

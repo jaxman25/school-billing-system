@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Add Student{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Add New Student</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Student Name *</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="grade">Grade/Class *</label>
+            <input type="text" id="grade" name="grade" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="guardian_name">Guardian Name</label>
+            <input type="text" id="guardian_name" name="guardian_name">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone">
+        </div>
+        
+        <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email">
+        </div>
+        
+        <button type="submit" class="btn">Add Student</button>
+        <a href="/students/" class="btn">Cancel</a>
+    </form>
+</div>
+{% endblock %}
