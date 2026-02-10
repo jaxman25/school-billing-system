@@ -4,6 +4,12 @@ load_dotenv()  # Load environment variables from .env file
 from flask import Flask, render_template, session, redirect, url_for
 from models.database import db, init_db
 import os
+
+# SSL/HTTPS Configuration
+import ssl
+SSL_CERT_PATH = "ssl/cert.pfx"
+SSL_KEY_PATH = "ssl/cert.pfx"
+SSL_PASSWORD = "SchoolBilling2024!"
 from datetime import timedelta
 
 def create_app():
@@ -23,7 +29,8 @@ def create_app():
     db.init_app(app)
     
     # Register blueprints
-    from controllers.auth_controller import auth_bp
+    from utils.waf import waf, waf_protect
+from controllers.auth_controller import auth_bp
     from controllers.student_controller import student_bp
     from controllers.bill_controller import bill_bp
     from controllers.payment_controller import payment_bp
@@ -38,10 +45,12 @@ def create_app():
     app.register_blueprint(notification_bp, url_prefix='/notifications')
     
     # Import authentication decorators
-    from controllers.auth_controller import login_required, admin_required
+    from utils.waf import waf, waf_protect
+from controllers.auth_controller import login_required, admin_required
     
     @app.route('/')
-    @login_required
+@waf_protect
+@login_required
     def index():
         # Quick dashboard stats
         from models.student import Student
@@ -133,6 +142,10 @@ def create_app():
         g.username = session.get('username')
         g.role = session.get('role')
     
+    # Setup WAF routes
+    from utils.waf import setup_waf_routes
+    setup_waf_routes(app)
+    
     return app
 
 def create_default_admin():
@@ -161,11 +174,18 @@ if __name__ == '__main__':
         # Create default admin user
         create_default_admin()
     
-    print(" Starting School Billing System MPV...")
-    print(" Authentication: Enabled")
-    print(" Default admin: admin / admin123")
-    print(" Application available at: http://localhost:5000")
+    print(" Starting School Billing System with HTTPS...")
+    print(" HTTPS: Enabled (SSL/TLS)")
+    print(" Default admin: admin / admin123 (CHANGE IMMEDIATELY!)")
+    print(" Secure URL: https://localhost:5000")
+    print("  Browser will warn about self-signed cert - accept to continue")
     print(" Database: database/school_billing.db")
     print(" Press Ctrl+C to stop")
     
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    # Run with SSL
+    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+    context.load_cert_chain(SSL_CERT_PATH, SSL_KEY_PATH, SSL_PASSWORD)
+    
+    app.run(debug=True, host='0.0.0.0', port=5000, ssl_context=context), host='0.0.0.0', port=5000)
+
+
