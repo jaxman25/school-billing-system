@@ -67,14 +67,6 @@ The School Billing System is a comprehensive web application designed to streaml
 ### PDF Exports
 ![PDF Exports](screenshots/PDF%20Export.png)
 
-| Dashboard | Student Management | Bill Creation |
-|-----------|-------------------|---------------|
-| ![Dashboard](https://via.placeholder.com/400x250/2c3e50/ffffff?text=Dashboard+View) | ![Students](https://via.placeholder.com/400x250/3498db/ffffff?text=Student+Management) | ![Bills](https://via.placeholder.com/400x250/27ae60/ffffff?text=Bill+Creation) |
-
-| Payment Processing | Reports | PDF Export |
-|-------------------|---------|------------|
-| ![Payments](https://via.placeholder.com/400x250/e74c3c/ffffff?text=Payment+Processing) | ![Reports](https://via.placeholder.com/400x250/f39c12/ffffff?text=Reports+Dashboard) | ![PDF](https://via.placeholder.com/400x250/9b59b6/ffffff?text=PDF+Export) |
-
 ## 🚀 Quick Start
 
 ### Prerequisites
