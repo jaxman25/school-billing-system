@@ -50,7 +50,7 @@ The School Billing System is a comprehensive web application designed to streaml
 ![Login](screenshots/login.png)
 
 ### Dashboard
-![Dashboard](screenshots/dashboard.png)
+![Dashboard](screenshots/Dashboard.png)
 
 ### Student Management
 ![Students](screenshots/student_management.png)
