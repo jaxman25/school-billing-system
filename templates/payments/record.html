@@ -1,0 +1,83 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Record Payment{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Record Payment</h2>
+    
+    <form method="POST">
+        <div class="form-group">
+            <label for="bill_id">Select Bill *</label>
+            <select id="bill_id" name="bill_id" required>
+                <option value="">Select a bill</option>
+                {% for bill in bills %}
+                <option value="{{ bill.id }}">
+                    {{ bill.student.name }} - {{ bill.description }} 
+                    (${{ "%.2f"|format(bill.balance()) }} due on {{ bill.due_date.strftime("%Y-%m-%d") }})
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="amount">Amount ($) *</label>
+            <input type="number" id="amount" name="amount" step="0.01" min="0.01" required placeholder="Enter payment amount">
+        </div>
+        
+        <div class="form-group">
+            <label for="payment_method">Payment Method *</label>
+            <select id="payment_method" name="payment_method" required>
+                <option value="cash">Cash</option>
+                <option value="check">Check</option>
+                <option value="bank_transfer">Bank Transfer</option>
+                <option value="mobile_money">Mobile Money</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="notes">Notes (Optional)</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Any additional information..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-success">Record Payment</button>
+        <a href="/" class="btn">Cancel</a>
+    </form>
+</div>
+
+{% if bills %}
+<div class="card">
+    <h3>Bills Available for Payment</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Description</th>
+                <th>Total Amount</th>
+                <th>Amount Paid</th>
+                <th>Balance</th>
+                <th>Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills %}
+            <tr>
+                <td>{{ bill.student.name }}</td>
+                <td>{{ bill.description }}</td>
+                <td>${{ "%.2f"|format(bill.amount) }}</td>
+                <td>${{ "%.2f"|format(bill.amount_paid()) }}</td>
+                <td>
+                    <strong>${{ "%.2f"|format(bill.balance()) }}</strong>
+                </td>
+                <td>{{ bill.due_date.strftime("%Y-%m-%d") }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-success">
+     All bills are paid! No outstanding bills to collect payment for.
+</div>
+{% endif %}
+{% endblock %}

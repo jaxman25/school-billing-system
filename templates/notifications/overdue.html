@@ -1,0 +1,110 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Overdue Bills{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin: 0;">Overdue Bills Notifications</h2>
+        <div>
+            <button onclick="sendNotifications()" class="btn btn-danger">Send Notifications</button>
+            <a href="/notifications/settings" class="btn">Email Settings</a>
+        </div>
+    </div>
+    
+    <div class="stats">
+        <div class="stat-card">
+            <div class="stat-value">{{ total_students }}</div>
+            <div class="stat-label">Students with Overdue</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">${{ "%.2f"|format(total_overdue) }}</div>
+            <div class="stat-label">Total Overdue Amount</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="sentCount">0</div>
+            <div class="stat-label">Notifications Sent</div>
+        </div>
+    </div>
+    
+    {% if students_with_overdue %}
+    <div id="notificationResults" style="display: none;"></div>
+    
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Email</th>
+                <th>Overdue Bills</th>
+                <th>Total Overdue</th>
+                <th>Oldest Due Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student_id, data in students_with_overdue.items() %}
+            <tr>
+                <td>{{ data.student.name }}</td>
+                <td>{{ data.student.email }}</td>
+                <td>{{ data.bills|length }}</td>
+                <td style="color: #e74c3c; font-weight: bold;">${{ "%.2f"|format(data.total_overdue) }}</td>
+                <td>
+                    {% set oldest = data.bills|sort(attribute='due_date')|first %}
+                    {{ oldest.due_date.strftime("%Y-%m-%d") }}
+                    ({{ (today - oldest.due_date).days if today else 0 }} days)
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="alert alert-success">
+         No overdue bills! All payments are up to date.
+    </div>
+    {% endif %}
+</div>
+
+<script>
+async function sendNotifications() {
+    const btn = event.target;
+    btn.disabled = true;
+    btn.innerHTML = 'Sending...';
+    
+    try {
+        const response = await fetch('/notifications/send_overdue', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            // Show results
+            document.getElementById('notificationResults').style.display = 'block';
+            document.getElementById('notificationResults').innerHTML = `
+                <div class="alert alert-success">
+                    <strong>Success!</strong> ${result.message}
+                    ${result.results ? '<ul>' + result.results.map(r => '<li>' + r + '</li>').join('') + '</ul>' : ''}
+                </div>
+            `;
+            
+            // Update sent count
+            document.getElementById('sentCount').textContent = result.results ? result.results.length : 0;
+            
+            // Refresh page after 3 seconds
+            setTimeout(() => location.reload(), 3000);
+        } else {
+            alert('Error: ' + result.message);
+            btn.disabled = false;
+            btn.innerHTML = 'Send Notifications';
+        }
+    } catch (error) {
+        alert('Error sending notifications: ' + error.message);
+        btn.disabled = false;
+        btn.innerHTML = 'Send Notifications';
+    }
+}
+</script>
+{% endblock %}
+

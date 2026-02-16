@@ -1,0 +1,4 @@
+﻿Flask==2.3.3
+Flask-SQLAlchemy==3.0.5
+reportlab==4.0.4
+fpdf2==2.7.7

@@ -1,0 +1,55 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Unpaid Bills{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Unpaid Bills</h2>
+    
+    {% if bills %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Description</th>
+                <th>Amount Due</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in bills %}
+            <tr>
+                <td>{{ bill.student.name }}</td>
+                <td>{{ bill.description }}</td>
+                <td>${{ "%.2f"|format(bill.balance()) }}</td>
+                <td>{{ bill.due_date.strftime("%Y-%m-%d") }}</td>
+                <td>
+                    <span style="color: {% if bill.status == 'paid' %}green{% elif bill.status == 'partial' %}orange{% else %}red{% endif %}">
+                        {{ bill.status|upper }}
+                    </span>
+                </td>
+                <td>
+                    <a href="/payments/record?bill_id={{ bill.id }}" class="btn btn-success">Record Payment</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    
+    {% set total_unpaid = 0 %}
+    {% for bill in bills %}
+        {% set total_unpaid = total_unpaid + bill.balance() %}
+    {% endfor %}
+    
+    <div style="margin-top: 1rem; padding: 1rem; background: #f8d7da; border-radius: 5px;">
+        <strong>Total Outstanding: ${{ "%.2f"|format(total_unpaid) }}</strong>
+    </div>
+    {% else %}
+    <div class="alert alert-success">
+         No unpaid bills! All bills are paid.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

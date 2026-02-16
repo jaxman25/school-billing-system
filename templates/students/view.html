@@ -1,0 +1,72 @@
+﻿{% extends "base.html" %}
+
+{% block title %}{{ student.name }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Student Details</h2>
+    
+    <div class="form-group">
+        <label>Name:</label>
+        <p>{{ student.name }}</p>
+    </div>
+    
+    <div class="form-group">
+        <label>Grade:</label>
+        <p>{{ student.grade }}</p>
+    </div>
+    
+    <div class="form-group">
+        <label>Guardian:</label>
+        <p>{{ student.guardian_name }}</p>
+    </div>
+    
+    <div class="form-group">
+        <label>Phone:</label>
+        <p>{{ student.phone }}</p>
+    </div>
+    
+    <div class="form-group">
+        <label>Email:</label>
+        <p>{{ student.email }}</p>
+    </div>
+    
+    <a href="/students/" class="btn">Back to List</a>
+</div>
+
+<div class="card">
+    <h3>Bills for {{ student.name }}</h3>
+    <a href="/bills/create?student_id={{ student.id }}" class="btn">Create Bill</a>
+    
+    {% if student.bills %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Balance</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in student.bills %}
+            <tr>
+                <td>{{ bill.description }}</td>
+                <td>${{ "%.2f"|format(bill.amount) }}</td>
+                <td>{{ bill.due_date.strftime("%Y-%m-%d") }}</td>
+                <td>
+                    <span style="color: {% if bill.status == 'paid' %}green{% elif bill.status == 'partial' %}orange{% else %}red{% endif %}">
+                        {{ bill.status|upper }}
+                    </span>
+                </td>
+                <td>${{ "%.2f"|format(bill.balance()) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No bills found for this student.</p>
+    {% endif %}
+</div>
+{% endblock %}

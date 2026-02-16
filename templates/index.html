@@ -1,0 +1,90 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="stats">
+    <div class="stat-card">
+        <div class="stat-value">{{ total_students }}</div>
+        <div class="stat-label">Total Students</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">{{ unpaid_bills }}</div>
+        <div class="stat-label">Unpaid Bills</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">${{ "%.2f"|format(total_outstanding) }}</div>
+        <div class="stat-label">Total Outstanding</div>
+    </div>
+</div>
+
+{% include "partials/charts.html" %}
+
+<div class="card">
+    <h2>Quick Actions</h2>
+    <div style="display: flex; gap: 1rem; margin-top: 1rem; flex-wrap: wrap;">
+        <a href="/students/add" class="btn">Add New Student</a>
+        <a href="/bills/create" class="btn">Create New Bill</a>
+        <a href="/bills/bulk" class="btn btn-warning">Bulk Create Bills</a>
+        <a href="/payments/record" class="btn btn-success">Record Payment</a>
+        <a href="/reports/outstanding" class="btn btn-warning">View Outstanding</a>
+        <a href="/notifications/overdue" class="btn btn-danger">Overdue Bills</a>
+    </div>
+</div>
+
+<div class="card">
+    <h2>Quick Search</h2>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div style="flex: 1; min-width: 300px;">
+            <h3>Search Bills</h3>
+            <form method="GET" action="/bills/search" style="display: flex; gap: 0.5rem;">
+                <input type="text" name="query" placeholder="Search bills..." style="flex: 1;">
+                <button type="submit" class="btn">Search</button>
+            </form>
+        </div>
+        <div style="flex: 1; min-width: 300px;">
+            <h3>Search Students</h3>
+            <form method="GET" action="/students/search" style="display: flex; gap: 0.5rem;">
+                <input type="text" name="query" placeholder="Search students..." style="flex: 1;">
+                <button type="submit" class="btn">Search</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% if recent_unpaid %}
+<div class="card">
+    <h2>Recent Unpaid Bills</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Student</th>
+                <th>Description</th>
+                <th>Amount</th>
+                <th>Due Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for bill in recent_unpaid %}
+            <tr>
+                <td>{{ bill.student.name }}</td>
+                <td>{{ bill.description }}</td>
+                <td>${{ "%.2f"|format(bill.amount) }}</td>
+                <td>{{ bill.due_date.strftime("%Y-%m-%d") }}</td>
+                <td>
+                    <span style="color: {{ 'green' if bill.status == 'paid' else 'orange' if bill.status == 'partial' else 'red' }}">
+                        {{ bill.status|upper }}
+                    </span>
+                </td>
+                <td>
+                    <a href="/payments/record?bill_id={{ bill.id }}" class="btn btn-success">Pay Now</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endif %}
+{% endblock %}

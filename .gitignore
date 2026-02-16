@@ -1,0 +1,16 @@
+﻿# Python temporary files
+__pycache__/
+*.pyc
+
+# Virtual environment
+venv/
+
+# Database files
+*.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Generated files
+exports/

@@ -1,0 +1,71 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Outstanding Report{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin: 0;">Outstanding Payments Report</h2>
+        <a href="/reports/outstanding/pdf" class="btn btn-danger">Export as PDF</a>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin: 0;">Outstanding Payments Report</h2>
+        <a href="/reports/outstanding/pdf" class="btn btn-danger">Export as PDF</a>
+    </div>
+    <h2>Outstanding Payments Report</h2>
+    
+    {% if student_data %}
+    <div style="margin-bottom: 1rem; padding: 1rem; background: #f8d7da; border-radius: 5px;">
+        <h3>Total Outstanding: <span style="color: #c0392b;">${{ "%.2f"|format(total_outstanding) }}</span></h3>
+    </div>
+    
+    {% for data in student_data %}
+    <div class="card" style="margin-bottom: 2rem;">
+        <h3>{{ data.student.name }} (Grade {{ data.student.grade }})</h3>
+        <p><strong>Guardian:</strong> {{ data.student.guardian_name }} | 
+           <strong>Phone:</strong> {{ data.student.phone }} |
+           <strong>Total Outstanding:</strong> <span style="color: red; font-weight: bold;">${{ "%.2f"|format(data.outstanding) }}</span>
+        </p>
+        
+        {% if data.unpaid_bills %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Description</th>
+                    <th>Total Amount</th>
+                    <th>Amount Paid</th>
+                    <th>Balance</th>
+                    <th>Due Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bill in data.unpaid_bills %}
+                <tr>
+                    <td>{{ bill.description }}</td>
+                    <td>${{ "%.2f"|format(bill.amount) }}</td>
+                    <td>${{ "%.2f"|format(bill.amount_paid()) }}</td>
+                    <td><strong>${{ "%.2f"|format(bill.balance()) }}</strong></td>
+                    <td>{{ bill.due_date.strftime("%Y-%m-%d") }}</td>
+                    <td>
+                        <span style="color: {% if bill.status == 'paid' %}green{% elif bill.status == 'partial' %}orange{% else %}red{% endif %}">
+                            {{ bill.status|upper }}
+                        </span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+    {% endfor %}
+    
+    {% else %}
+    <div class="alert alert-success">
+         Excellent! No outstanding payments. All bills are settled.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+

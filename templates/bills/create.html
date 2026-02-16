@@ -1,0 +1,38 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Create Bill{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Create New Bill</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label for="student_id">Student *</label>
+            <select id="student_id" name="student_id" required>
+                <option value="">Select a student</option>
+                {% for student in students %}
+                <option value="{{ student.id }}">{{ student.name }} (Grade {{ student.grade }})</option>
+                {% endfor %}
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Description *</label>
+            <input type="text" id="description" name="description" required placeholder="e.g., Term 1 Tuition, Books, Uniform">
+        </div>
+        
+        <div class="form-group">
+            <label for="amount">Amount ($) *</label>
+            <input type="number" id="amount" name="amount" step="0.01" min="0" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="due_date">Due Date *</label>
+            <input type="date" id="due_date" name="due_date" required>
+        </div>
+        
+        <button type="submit" class="btn">Create Bill</button>
+        <a href="/bills/" class="btn">Cancel</a>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+﻿{% extends "base.html" %}
+
+{% block title %}Email Settings{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>Email Notification Settings</h2>
+    
+    <div class="alert alert-{{ 'success' if enabled else 'warning' }}">
+        {% if enabled %}
+         Email notifications are <strong>ENABLED</strong>
+        {% else %}
+         Email notifications are <strong>DISABLED</strong> - Configure SMTP settings below
+        {% endif %}
+    </div>
+    
+    <h3>Configuration</h3>
+    <p>To enable email notifications, set the following environment variables:</p>
+    
+    <div style="background: #f8f9fa; padding: 1rem; border-radius: 5px; margin: 1rem 0;">
+        <pre style="margin: 0;">
+# For Gmail (recommended for testing)
+export SMTP_SERVER="smtp.gmail.com"
+export SMTP_PORT=587
+export SMTP_USERNAME="your-email@gmail.com"
+export SMTP_PASSWORD="your-app-password"  # Use App Password, not regular password
+export FROM_EMAIL="billing@yourschool.edu"
+
+# For other providers
+export SMTP_SERVER="your-smtp-server.com"
+export SMTP_PORT=587
+export SMTP_USERNAME="your-username"
+export SMTP_PASSWORD="your-password"
+export FROM_EMAIL="billing@yourschool.edu"
+        </pre>
+    </div>
+    
+    <p><strong>Current Settings:</strong></p>
+    <ul>
+        <li>SMTP Server: {{ smtp_server or 'Not set' }}</li>
+        <li>From Email: {{ from_email or 'Not set' }}</li>
+        <li>Status: {{ 'Enabled' if enabled else 'Disabled' }}</li>
+    </ul>
+    
+    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+        <form method="POST" action="/notifications/test_email">
+            <button type="submit" class="btn btn-success" {% if not enabled %}disabled{% endif %}>
+                Send Test Email
+            </button>
+        </form>
+        <a href="/notifications/overdue" class="btn">Back to Overdue Bills</a>
+        <a href="/" class="btn">Dashboard</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3>About Email Notifications</h3>
+    <p>Email notifications help automate communication with parents/guardians about:</p>
+    <ul>
+        <li> Bills that are overdue by 7+ days</li>
+        <li> Payment confirmations (when enabled)</li>
+        <li> Monthly statements (future feature)</li>
+    </ul>
+    
+    <p><strong>Note for Gmail users:</strong> You must generate an "App Password" from your Google Account settings. Regular passwords won't work.</p>
+</div>
+{% endblock %}
