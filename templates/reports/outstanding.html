@@ -8,12 +8,7 @@
         <h2 style="margin: 0;">Outstanding Payments Report</h2>
         <a href="/reports/outstanding/pdf" class="btn btn-danger">Export as PDF</a>
     </div>
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-        <h2 style="margin: 0;">Outstanding Payments Report</h2>
-        <a href="/reports/outstanding/pdf" class="btn btn-danger">Export as PDF</a>
-    </div>
-    <h2>Outstanding Payments Report</h2>
-    
+        
     {% if student_data %}
     <div style="margin-bottom: 1rem; padding: 1rem; background: #f8d7da; border-radius: 5px;">
         <h3>Total Outstanding: <span style="color: #c0392b;">${{ "%.2f"|format(total_outstanding) }}</span></h3>
